@@ -21,3 +21,7 @@ az functionapp config appsettings set --name %FUNCTION_NAME% --resource-group %R
 
 ** Code Deployment   
  Deployment Via CICD (GitHub Actions)
+ 
+ ** Application Url's
+ 
+ https://chatbot-whatsapp-notification-service.azurewebsites.net/api/sendMessage?whtsappno=31626662987&name=saroj&trackingId=12121212&lang=en
