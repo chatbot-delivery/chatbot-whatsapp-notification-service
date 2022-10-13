@@ -260,7 +260,7 @@ public class Function {
 		WelcomeMessage welcomeMessage = new WelcomeMessage();
 		StringBuilder response = new StringBuilder();
 
-		String url = "https://whatsappchatbot-content-service.azurewebsites.net/dialogs?language="+lang+"&dialogId=welcome";
+		String url = "https://chatbot-content-service.azurewebsites.net/dialogs?language="+lang+"&dialogId=welcome";
 
 		HttpURLConnection httpClient = (HttpURLConnection) new URL(url).openConnection();
 
