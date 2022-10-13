@@ -38,6 +38,6 @@ jobs:
         with:
           app-name: 'chatbot-whatsapp-notification-service'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_45C0639AD983461F87AE43C1BB8094A0 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D09C18B455004BC79EB239E17653D2D2 }}
           package: '${{ env.PACKAGE_DIRECTORY }}'
           respect-pom-xml: true
