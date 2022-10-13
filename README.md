@@ -3,6 +3,7 @@
 ** Infra Deployment
 set RESOURCE_GROUP_NAME=RG-FedExEurope_DeliveryBot
 set STORAGE_ACCOUNT_NAME=functionappbotstorage
+set APP_SERVICE_PLAN=asp-chatbot-whatsapp-notification-service
 set FUNCTION_NAME=chatbot-whatsapp-notification-service
 set LOCATION="westeurope"
 set LOG_ANALYTICS_WORKSPACE="chatbot-whatsapp-notification-service-workspace"
@@ -10,7 +11,11 @@ set APP_INSIGHTS_NAME="chatbot-whatsapp-notification-service-app"
 
 az storage account create -n %STORAGE_ACCOUNT_NAME% --resource-group %RESOURCE_GROUP_NAME% --location %LOCATION% --sku Standard_LRS
 
-az functionapp create --consumption-plan-location %LOCATION% --name %FUNCTION_NAME% --os-type Windows --resource-group %RESOURCE_GROUP_NAME% --runtime java --functions-version 4 --storage-account %STORAGE_ACCOUNT_NAME%
+az functionapp plan create --name %APP_SERVICE_PLAN% --resource-group %RESOURCE_GROUP_NAME% --location %LOCATION% --sku B1 --min-instances 1
+
+az functionapp create --resource-group %RESOURCE_GROUP_NAME%  -p %APP_SERVICE_PLAN% -n %FUNCTION_NAME% -s %STORAGE_ACCOUNT_NAME% --os-type Windows --runtime java --functions-version 4
+
+#####az functionapp create --consumption-plan-location %LOCATION% --name %FUNCTION_NAME% --os-type Windows --resource-group %RESOURCE_GROUP_NAME% --runtime java --functions-version 4 --storage-account %STORAGE_ACCOUNT_NAME%
 
 az monitor log-analytics workspace create --resource-group %RESOURCE_GROUP_NAME% -n %LOG_ANALYTICS_WORKSPACE%
 
