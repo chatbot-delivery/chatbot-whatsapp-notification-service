@@ -279,7 +279,7 @@ public class Function {
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
 
-		try (BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()))) {
+		try (BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream(), "UTF-8"))) {
 
 			String line;
 
