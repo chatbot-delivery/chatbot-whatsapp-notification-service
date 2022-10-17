@@ -61,6 +61,7 @@ public class Function {
 	private final String CLIENT_SECRET = System.getenv("WHATSAPP_TOKEN");
 	private final String PHONE_ID = System.getenv("PHONE_ID");
 	private final String WA_GATEWAY_URL = "https://graph.facebook.com/v14.0/" + PHONE_ID + "/messages";
+	private final static String encoding = Charset.defaultCharset().name();
 
 	@FunctionName("sendMessage")
 	public HttpResponseMessage run(@HttpTrigger(name = "req", methods = { HttpMethod.GET,
@@ -229,10 +230,10 @@ public class Function {
 			conn.setRequestProperty("Content-Type", "application/json");
 			
 			conn.setRequestProperty("Accept", "application/json");
-			conn.setRequestProperty("Accept-Charset", "UTF-8");
+			conn.setRequestProperty("Accept-Charset", this.encoding);
 
 			OutputStream os = conn.getOutputStream();
-			os.write(jsonPayload.getBytes(Charset.defaultCharset()));
+			os.write(jsonPayload.getBytes(this.encoding));
 			os.flush();
 			os.close();
 
@@ -273,13 +274,13 @@ public class Function {
 		// add request header
 		httpClient.setRequestProperty("Content-Type", "application/json");
 		httpClient.setRequestProperty("Accept", "application/json");
-		httpClient.setRequestProperty("Accept-Charset", "UTF-8");
+		httpClient.setRequestProperty("Accept-Charset", encoding);
 
 		int responseCode = httpClient.getResponseCode();
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
 
-		try (BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream(), Charset.defaultCharset()))) {
+		try (BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream(), encoding))) {
 
 			String line;
 

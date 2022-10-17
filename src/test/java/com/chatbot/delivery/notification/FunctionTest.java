@@ -1,4 +1,4 @@
-/*
+
 package com.chatbot.delivery.notification;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,4 +60,3 @@ public class FunctionTest {
 		assertEquals(ret.getStatus(), HttpStatus.OK);
 	}
 }
-*/
