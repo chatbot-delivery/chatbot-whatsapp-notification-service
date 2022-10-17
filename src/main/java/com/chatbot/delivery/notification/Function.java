@@ -269,6 +269,8 @@ public class Function {
 
 		// add request header
 		httpClient.setRequestProperty("Content-Type", "application/json");
+		httpClient.setRequestProperty("Accept", "application/json");
+		httpClient.setRequestProperty("Accept-Charset", "utf-8");
 
 		int responseCode = httpClient.getResponseCode();
 		System.out.println("\nSending 'GET' request to URL : " + url);
@@ -296,6 +298,8 @@ public class Function {
 				String buttonText = (String) dialogTexts.getJSONObject(1).get("dialogText");
 				welcomeMessage.setWelcomeMessage(message);
 				welcomeMessage.setButtonText(buttonText);
+				context.getLogger().info("Welcome Message: " + message);
+				context.getLogger().info("Welcome Message: " + buttonText);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
