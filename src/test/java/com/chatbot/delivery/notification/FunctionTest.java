@@ -1,4 +1,4 @@
-/*
+
 package com.chatbot.delivery.notification;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +34,7 @@ public class FunctionTest {
 		queryParams.put("name", "Saroj Gharat");
 		queryParams.put("trackingId", "1234567890");
 		queryParams.put("whtsappno", "31626662987");
-		queryParams.put("lang", "en");
+		queryParams.put("lang", "zh-CN");
 		
 		doReturn(queryParams).when(req).getQueryParameters();
 
@@ -60,4 +60,3 @@ public class FunctionTest {
 		assertEquals(ret.getStatus(), HttpStatus.OK);
 	}
 }
-*/

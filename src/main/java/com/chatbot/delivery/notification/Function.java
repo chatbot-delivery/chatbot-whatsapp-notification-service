@@ -229,7 +229,7 @@ public class Function {
 			conn.setRequestProperty("Content-Type", "application/json");
 			
 			conn.setRequestProperty("Accept", "application/json");
-			conn.setRequestProperty("Accept-Charset", "utf-8");
+			conn.setRequestProperty("Accept-Charset", "UTF-8");
 
 			OutputStream os = conn.getOutputStream();
 			os.write(jsonPayload.getBytes(Charset.defaultCharset()));
@@ -273,13 +273,13 @@ public class Function {
 		// add request header
 		httpClient.setRequestProperty("Content-Type", "application/json");
 		httpClient.setRequestProperty("Accept", "application/json");
-		httpClient.setRequestProperty("Accept-Charset", "utf-8");
+		httpClient.setRequestProperty("Accept-Charset", "UTF-8");
 
 		int responseCode = httpClient.getResponseCode();
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
 
-		try (BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream(), "UTF-8"))) {
+		try (BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream(), Charset.defaultCharset()))) {
 
 			String line;
 
@@ -291,9 +291,11 @@ public class Function {
 			System.out.println(response.toString());
 
 		}
-
+		
+		String contentResponse = new String(response.toString().getBytes(Charset.defaultCharset()), "UTF-8");
+		
 		if (responseCode == 200) {
-			JSONArray arr = new JSONArray(response.toString());
+			JSONArray arr = new JSONArray(contentResponse);
 			try {
 				JSONObject dialog = arr.getJSONObject(0);
 				JSONArray dialogTexts = (JSONArray) dialog.getJSONArray("dialogTexts");
