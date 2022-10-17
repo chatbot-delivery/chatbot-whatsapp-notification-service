@@ -292,7 +292,7 @@ public class Function {
 
 		}
 		
-		String contentResponse = new String(response.toString().getBytes(Charset.defaultCharset()), "UTF-8");
+		String contentResponse = new String(response.toString().getBytes(Charset.defaultCharset()), Charset.defaultCharset().name());
 		
 		if (responseCode == 200) {
 			JSONArray arr = new JSONArray(contentResponse);
