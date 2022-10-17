@@ -227,9 +227,12 @@ public class Function {
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Authorization", "Bearer " + accessToken);
 			conn.setRequestProperty("Content-Type", "application/json");
+			
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setRequestProperty("Accept-Charset", "utf-8");
 
 			OutputStream os = conn.getOutputStream();
-			os.write(jsonPayload.getBytes());
+			os.write(jsonPayload.getBytes(Charset.defaultCharset()));
 			os.flush();
 			os.close();
 
