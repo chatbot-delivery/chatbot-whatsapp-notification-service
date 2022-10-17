@@ -229,11 +229,12 @@ public class Function {
 			conn.setRequestProperty("Authorization", "Bearer " + accessToken);
 			conn.setRequestProperty("Content-Type", "application/json");
 			
-			conn.setRequestProperty("Accept", "application/json");
-			conn.setRequestProperty("Accept-Charset", this.encoding);
+//			conn.setRequestProperty("Accept", "application/json");
+//			conn.setRequestProperty("Accept-Charset", this.encoding);
 
 			OutputStream os = conn.getOutputStream();
-			os.write(jsonPayload.getBytes(this.encoding));
+			//os.write(jsonPayload.getBytes(this.encoding));
+			os.write(jsonPayload.getBytes());
 			os.flush();
 			os.close();
 
@@ -273,14 +274,14 @@ public class Function {
 
 		// add request header
 		httpClient.setRequestProperty("Content-Type", "application/json");
-		httpClient.setRequestProperty("Accept", "application/json");
-		httpClient.setRequestProperty("Accept-Charset", encoding);
+//		httpClient.setRequestProperty("Accept", "application/json");
+//		httpClient.setRequestProperty("Accept-Charset", encoding);
 
 		int responseCode = httpClient.getResponseCode();
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
 
-		try (BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream(), encoding))) {
+		try (BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()))) {
 
 			String line;
 
