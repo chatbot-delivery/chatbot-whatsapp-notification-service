@@ -278,8 +278,8 @@ public class Function {
 //		httpClient.setRequestProperty("Accept-Charset", encoding);
 
 		int responseCode = httpClient.getResponseCode();
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		System.out.println("Response Code : " + responseCode);
+		context.getLogger().info("\nSending 'GET' request to URL : " + url);
+		context.getLogger().info("Response Code : " + responseCode);
 
 		try (BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()))) {
 
@@ -290,7 +290,7 @@ public class Function {
 			}
 
 			// print result
-			System.out.println(response.toString());
+			context.getLogger().info(response.toString());
 
 		}
 		
