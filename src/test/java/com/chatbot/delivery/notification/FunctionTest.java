@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import com.chatbot.delivery.notification.Function;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.HttpRequestMessage;
 import com.microsoft.azure.functions.HttpResponseMessage;
@@ -32,9 +31,10 @@ public class FunctionTest {
 
 		final Map<String, String> queryParams = new HashMap<>();
 		queryParams.put("name", "Saroj Gharat");
-		queryParams.put("trackingId", "1234567890");
+		long trackingId = (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
+		queryParams.put("trackingId", String.valueOf(trackingId));
 		queryParams.put("whtsappno", "31626662987");
-		queryParams.put("lang", "zh-CN");
+		queryParams.put("lang", "en");
 		
 		doReturn(queryParams).when(req).getQueryParameters();
 

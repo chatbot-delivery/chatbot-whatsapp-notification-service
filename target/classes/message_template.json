@@ -1,28 +1,48 @@
 {
-	"messaging_product": "whatsapp",
-	"to": "$RECEIVER",
-	"type": "interactive",
-	"interactive": {
-		"type": "button",
-		"header": {
-			"type": "image",
-			"image": {
-				"link": "https://logos-download.com/wp-content/uploads/2016/06/FedEx_Express_logo_violet.png"
-			}
-		},
-		"body": {
-			"text": "$TEXT1"
-		},
-		"action": {
-			"buttons": [
-				{
-					"type": "reply",
-					"reply": {
-						"id": "$TRACKING_NBR:$LANG",
-						"title": "$TEXT2"
-					}
-				}
-			]
-		}
-	}
+    "messaging_product": "whatsapp",
+    "to": "$RECEPIENT_NUMBER",
+    "type": "template",
+    "template": {
+        "name": "whatsapp_delivery_notification_template",
+        "language": {
+            "code": "$LANG"
+        },
+        "components": [
+            {
+                "type": "header",
+                "parameters": [
+                    {
+                        "type": "image",
+                        "image": {
+                            "link": "https://th.bing.com/th/id/R.cd351b24bbafd7d35ba3527447bc7879?rik=F8yGmghh%2bR5e1g&riu=http%3a%2f%2fs.productreview.com.au%2fproducts%2fimages%2f7fd278b5-10f3-4caf-b0e3-91c526031c83.png&ehk=kx0U3zoKY9xCRtaBVYDv99tpW39elzV7rTFwQ9ejju8%3d&risl=&pid=ImgRaw&r=0"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "body",
+                "parameters": [
+                    {
+                        "type": "text",
+                        "text": "$NAME"
+                    },
+                    {
+                        "type": "text",
+                        "text": "$TRCK_NBR"
+                    }
+                ]
+            },
+            {
+                "type": "button",
+                "sub_type" : "quick_reply",
+                "index": "0", 
+                "parameters": [
+                    {
+                        "type": "payload",
+                        "payload":"$TRCK_NBR:$LOCALE:$TRCK_NBR"
+                    }
+                ]
+            }
+        ]
+    }
 }

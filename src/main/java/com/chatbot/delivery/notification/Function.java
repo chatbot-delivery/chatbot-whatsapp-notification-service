@@ -8,6 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -76,7 +78,7 @@ public class Function {
 		final String name = request.getQueryParameters().get("name");
 		final String trackingId = request.getQueryParameters().get("trackingId");
 		final String lang = request.getQueryParameters().get("lang");
-		String template_name = "delivery_temp";
+		String template_name = "whatsapp_delivery_notification_template";
 
 		context.getLogger().info("whtsappno: " + whtsappno);
 		context.getLogger().info("name: " + name);
@@ -95,13 +97,6 @@ public class Function {
 					.body("Hello " + name + " ,your message could not be sent").build();
 		}
 
-		/*
-		 * if (name == null) { return
-		 * request.createResponseBuilder(HttpStatus.BAD_REQUEST).
-		 * body("Please pass a name on the query string or in the request body").build()
-		 * ; } else { return request.createResponseBuilder(HttpStatus.OK).body("Hello, "
-		 * + name).build(); }
-		 */
 	}
 
 	public static String buildMessage(String number, String template, String lang, String name, String trackingId,
@@ -110,70 +105,26 @@ public class Function {
 		// object
 		initialize();
 
-		String messageTemplate = readFile("main/resources/message_template.json", Charset.defaultCharset());
+		String jsonPayload = readFile("message_template.json", Charset.defaultCharset());
 
-		context.getLogger().info(messageTemplate);
-//		String messageTemplate = Files
-//				.readString(Paths.get("src/main/java/com/fedex/delivery/notification/message_template.json"));
+		jsonPayload = jsonPayload.replace("$RECEPIENT_NUMBER", number);
+		jsonPayload = jsonPayload.replace("$NAME", name);
+		jsonPayload = jsonPayload.replace("$TRCK_NBR", trackingId);
+		jsonPayload = jsonPayload.replace("$LANG", lang.replace("-", "_"));
+		jsonPayload = jsonPayload.replace("$LOCALE", lang);
+		
+		context.getLogger().info("jsonPayload {} " + jsonPayload);
 
-		WelcomeMessage welcomeMessage = getWelcomeMessage(lang, context);
-		String text1 = welcomeMessage.getWelcomeMessage().replace("{1}", name);
-		text1 = text1.replace("{2}", trackingId);
-		messageTemplate = messageTemplate.replace("$RECEIVER", number);
-		messageTemplate = messageTemplate.replace("$TEXT1", text1);
-		messageTemplate = messageTemplate.replace("$TEXT2", welcomeMessage.getButtonText());
-		messageTemplate = messageTemplate.replace("$TRACKING_NBR", trackingId);
-		messageTemplate = messageTemplate.replace("$LANG", lang);
-
-		context.getLogger().info(messageTemplate);
-
-		context.getLogger().info("Inside buildMessage");
-//    	String jsonPayload = new StringBuilder()
-//          .append("{\"messaging_product\": \"whatsapp\",\"to\":")
-//          .append(number)
-//          .append(",\"type\": \"interactive\",\"interactive\": {\"name\": ")
-//          .append("\"")
-//          .append(template)
-//          .append("\"")
-//          .append(",\"language\": {\"code\": ")
-//          .append("\"")
-//          .append(lang)
-//          .append("\"")
-//          .append("},\"components\":[{\"type\": \"HEADER\",\"parameters\": [{\"type\":\"image\",\"image\": {")
-//          .append("\"link\":\"https://logos-download.com/wp-content/uploads/2016/06/FedEx_Express_logo_violet.png\"")
-//          .append("}  } ]},{ \"type\": \"BODY\",\"parameters\":[{ \"type\":\"text\",\"text\":")
-//          .append("\"")
-//          .append(name)
-//          .append("\"")
-//          .append("},{\"type\":\"TEXT\",\"text\":")
-//          .append("\"")
-//          .append(trackingId)
-//          .append("\"")
-//          .append("}] }]}}")
-//          .toString();
-
-		context.getLogger().info("jsonPayload {} " + messageTemplate);
-
-		return messageTemplate;
+		return jsonPayload;
 	}
 
 	static String readFile(String path, Charset encoding) throws IOException, URISyntaxException {
-
-//		byte[] encoded = Files.readAllBytes(Paths.get(Function.class.getResource(path).toURI()));
-//		return new String(encoded, encoding);
-//		
-		String fileContents = "{\r\n" + "	\"messaging_product\": \"whatsapp\",\r\n" + "	\"to\": \"$RECEIVER\",\r\n"
-				+ "	\"type\": \"interactive\",\r\n" + "	\"interactive\": {\r\n" + "		\"type\": \"button\",\r\n"
-				+ "		\"header\": {\r\n" + "			\"type\": \"image\",\r\n" + "			\"image\": {\r\n"
-				+ "				\"link\": \"https://logos-download.com/wp-content/uploads/2016/06/FedEx_Express_logo_violet.png\"\r\n"
-				+ "			}\r\n" + "		},\r\n" + "		\"body\": {\r\n" + "			\"text\": \"$TEXT1\"\r\n"
-				+ "		},\r\n" + "		\"action\": {\r\n" + "			\"buttons\": [\r\n" + "				{\r\n"
-				+ "					\"type\": \"reply\",\r\n" + "					\"reply\": {\r\n"
-				+ "						\"id\": \"$TRACKING_NBR:$LANG:$TRACKING_NBR\",\r\n"
-				+ "						\"title\": \"$TEXT2\"\r\n" + "					}\r\n" + "				}\r\n"
-				+ "			]\r\n" + "		}\r\n" + "	}\r\n" + "}";
-
-		return fileContents;
+		
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		URL resource = loader.getResource(path);
+		
+		byte[] encoded = Files.readAllBytes(Paths.get(resource.toURI()));
+		return new String(encoded, encoding);
 	}
 
 	private static void initialize() {
@@ -225,15 +176,14 @@ public class Function {
 			URL url = new URL(urlstring);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
-			conn.setRequestMethod("GET");
+			conn.setRequestMethod("POST");
 			conn.setRequestProperty("Authorization", "Bearer " + accessToken);
 			conn.setRequestProperty("Content-Type", "application/json");
-			
+
 //			conn.setRequestProperty("Accept", "application/json");
 //			conn.setRequestProperty("Accept-Charset", this.encoding);
 
 			OutputStream os = conn.getOutputStream();
-			//os.write(jsonPayload.getBytes(this.encoding));
 			os.write(jsonPayload.getBytes());
 			os.flush();
 			os.close();
@@ -259,122 +209,8 @@ public class Function {
 
 	}
 
-	private static WelcomeMessage getWelcomeMessage(String lang, final ExecutionContext context) throws Exception {
+	
 
-		context.getLogger().info("start getWelcomeMessage:");
-		WelcomeMessage welcomeMessage = new WelcomeMessage();
-		StringBuilder response = new StringBuilder();
-
-		String url = "https://chatbot-content-service.azurewebsites.net/dialogs?language="+lang+"&dialogId=welcome";
-
-		HttpURLConnection httpClient = (HttpURLConnection) new URL(url).openConnection();
-
-		// optional default is GET
-		httpClient.setRequestMethod("GET");
-
-		// add request header
-		httpClient.setRequestProperty("Content-Type", "application/json");
-//		httpClient.setRequestProperty("Accept", "application/json");
-//		httpClient.setRequestProperty("Accept-Charset", encoding);
-
-		int responseCode = httpClient.getResponseCode();
-		context.getLogger().info("\nSending 'GET' request to URL : " + url);
-		context.getLogger().info("Response Code : " + responseCode);
-
-		try (BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()))) {
-
-			String line;
-
-			while ((line = in.readLine()) != null) {
-				response.append(line);
-			}
-
-			// print result
-			context.getLogger().info(response.toString());
-
-		}
-		
-		String contentResponse = new String(response.toString().getBytes(Charset.defaultCharset()), Charset.defaultCharset().name());
-		
-		if (responseCode == 200) {
-			JSONArray arr = new JSONArray(contentResponse);
-			try {
-				JSONObject dialog = arr.getJSONObject(0);
-				JSONArray dialogTexts = (JSONArray) dialog.getJSONArray("dialogTexts");
-				String message = (String) dialogTexts.getJSONObject(0).get("dialogText");
-				String buttonText = (String) dialogTexts.getJSONObject(1).get("dialogText");
-				welcomeMessage.setWelcomeMessage(message);
-				welcomeMessage.setButtonText(buttonText);
-				context.getLogger().info("Welcome Message: " + message);
-				context.getLogger().info("Welcome Message: " + buttonText);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			return welcomeMessage;
-		}
-
-		context.getLogger().info("end getWelcomeMessage");
-
-		return welcomeMessage;
-
-	}
-
-	/*
-	 * private static WelcomeMessage getWelcomeMessage(String lang, final
-	 * ExecutionContext context) throws Exception {
-	 * 
-	 * String jsonPayload = "";
-	 * context.getLogger().info("start getWelcomeMessage:");
-	 * context.getLogger().info("start getWelcomeMessage:"); WelcomeMessage
-	 * welcomeMessage = new WelcomeMessage(); try {
-	 * 
-	 * String urlString =
-	 * "https://whatsappchatbot-content-service.azurewebsites.net/dialogs"; String
-	 * charset = "UTF-8"; // Or in Java 7 and later, use the constant:
-	 * java.nio.charset.StandardCharsets.UTF_8.name() String param1 = lang; String
-	 * param2 = "welcome"; // ...
-	 * 
-	 * String query = String.format("language=%s&dialogId=%s",
-	 * URLEncoder.encode(param1, charset), URLEncoder.encode(param2, charset));
-	 * 
-	 * context.getLogger().info(urlString + "?" + query); //String urlString =
-	 * "https://whatsappchatbot-content-service.azurewebsites.net/dialogs?language=en&dialogId=welcome";
-	 * URL url = new URL(urlString + "?" + query); HttpURLConnection conn =
-	 * (HttpURLConnection) url.openConnection(); conn.setDoOutput(true);
-	 * conn.setRequestMethod("GET"); conn.setRequestProperty("Content-Type",
-	 * "application/json");
-	 * 
-	 * OutputStream os = conn.getOutputStream(); os.write(jsonPayload.getBytes());
-	 * os.flush(); os.close();
-	 * 
-	 * int statusCode = conn.getResponseCode();
-	 * context.getLogger().info("Response from Content Service: \n");
-	 * context.getLogger().info("Status Code: " + statusCode); BufferedReader br =
-	 * new BufferedReader( new InputStreamReader((statusCode == 200) ?
-	 * conn.getInputStream() : conn.getErrorStream())); String output; while
-	 * ((output = br.readLine()) != null) { context.getLogger().info(output); }
-	 * conn.disconnect();
-	 * 
-	 * if (statusCode == 200) {
-	 * 
-	 * JSONArray arr = new JSONArray(output); try { JSONObject dialog =
-	 * arr.getJSONObject(0); JSONArray dialogTexts = (JSONArray)
-	 * dialog.getJSONArray("dialogTexts"); String message = (String)
-	 * dialogTexts.getJSONObject(0).get("dialogText"); String buttonText = (String)
-	 * dialogTexts.getJSONObject(1).get("dialogText");
-	 * welcomeMessage.setWelcomeMessage(message);
-	 * welcomeMessage.setButtonText(buttonText); } catch (Exception e) { // TODO
-	 * Auto-generated catch block e.printStackTrace(); }
-	 * 
-	 * return welcomeMessage; } } catch (Exception e) { e.printStackTrace();
-	 * context.getLogger().log(Level.SEVERE, "Error occured", e.getStackTrace()); }
-	 * context.getLogger().info("end getWelcomeMessage");
-	 * 
-	 * return welcomeMessage;
-	 * 
-	 * }
-	 */
+	
 
 }
