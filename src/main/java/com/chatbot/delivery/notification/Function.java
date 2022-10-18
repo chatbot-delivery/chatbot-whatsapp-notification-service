@@ -105,7 +105,7 @@ public class Function {
 		// object
 		initialize();
 
-		String jsonPayload = readFile("message_template.json", Charset.defaultCharset());
+		String jsonPayload = readFile("message_template.json", Charset.defaultCharset(), context);
 
 		jsonPayload = jsonPayload.replace("$RECEPIENT_NUMBER", number);
 		jsonPayload = jsonPayload.replace("$NAME", name);
@@ -118,11 +118,13 @@ public class Function {
 		return jsonPayload;
 	}
 
-	static String readFile(String path, Charset encoding) throws IOException, URISyntaxException {
+	static String readFile(String path, Charset encoding, final ExecutionContext context) throws IOException, URISyntaxException {
 		
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		URL resource = loader.getResource(path);
 		
+		System.out.println(resource);
+		context.getLogger().info(resource.toString());
 		byte[] encoded = Files.readAllBytes(Paths.get(resource.toURI()));
 		return new String(encoded, encoding);
 	}
