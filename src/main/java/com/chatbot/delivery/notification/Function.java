@@ -5,12 +5,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -20,9 +25,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.HttpMethod;
@@ -118,15 +120,10 @@ public class Function {
 		return jsonPayload;
 	}
 
-	static String readFile(String path, Charset encoding, final ExecutionContext context) throws IOException, URISyntaxException {
+	static String readFile(String fileName, Charset encoding, final ExecutionContext context) throws IOException, URISyntaxException {
 		
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		URL resource = loader.getResource(path);
-		
-		System.out.println(resource);
-		context.getLogger().info(resource.toString());
-		byte[] encoded = Files.readAllBytes(Paths.get(resource.toURI()));
-		return new String(encoded, encoding);
+		FileResourcesUtils app = new FileResourcesUtils();
+        return app.readFile(fileName);
 	}
 
 	private static void initialize() {
