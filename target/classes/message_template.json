@@ -3,7 +3,7 @@
     "to": "$RECEPIENT_NUMBER",
     "type": "template",
     "template": {
-        "name": "whatsapp_delivery_notification_template",
+        "name": "$TEMPLATE",
         "language": {
             "code": "$LANG"
         },

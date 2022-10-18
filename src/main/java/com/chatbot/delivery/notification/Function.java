@@ -110,6 +110,7 @@ public class Function {
 		String jsonPayload = readFile("message_template.json", Charset.defaultCharset(), context);
 
 		jsonPayload = jsonPayload.replace("$RECEPIENT_NUMBER", number);
+		jsonPayload = jsonPayload.replace("$TEMPLATE", template);
 		jsonPayload = jsonPayload.replace("$NAME", name);
 		jsonPayload = jsonPayload.replace("$TRCK_NBR", trackingId);
 		jsonPayload = jsonPayload.replace("$LANG", lang.replace("-", "_"));
