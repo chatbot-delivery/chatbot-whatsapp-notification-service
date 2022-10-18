@@ -80,7 +80,7 @@ public class Function {
 		final String name = request.getQueryParameters().get("name");
 		final String trackingId = request.getQueryParameters().get("trackingId");
 		final String lang = request.getQueryParameters().get("lang");
-		String template_name = "whatsapp_delivery_notification_template";
+		String template_name = "fdmi_delivery_notification_template";
 
 		context.getLogger().info("whtsappno: " + whtsappno);
 		context.getLogger().info("name: " + name);
