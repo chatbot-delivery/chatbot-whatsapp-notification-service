@@ -80,7 +80,7 @@ public class Function {
 		final String name = request.getQueryParameters().get("name");
 		final String trackingId = request.getQueryParameters().get("trackingId");
 		final String lang = request.getQueryParameters().get("lang");
-		String template_name = "fdmi_delivery_notification_template";
+		String template_name = request.getQueryParameters().get("template");
 
 		context.getLogger().info("whtsappno: " + whtsappno);
 		context.getLogger().info("name: " + name);
@@ -107,7 +107,7 @@ public class Function {
 		// object
 		initialize();
 
-		String jsonPayload = readFile("message_template.json", Charset.defaultCharset(), context);
+		String jsonPayload = readFile(template+".json", Charset.defaultCharset(), context);
 
 		jsonPayload = jsonPayload.replace("$RECEPIENT_NUMBER", number);
 		jsonPayload = jsonPayload.replace("$TEMPLATE", template);
