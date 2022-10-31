@@ -34,14 +34,7 @@
             },
             {
                 "type": "button",
-                "sub_type" : "quick_reply",
-                "index": "0", 
-                "parameters": [
-                    {
-                        "type": "payload",
-                        "payload":"$TRCK_NBR:$LOCALE:$TRCK_NBR"
-                    }
-                ]
+                "sub_type" : "url"
             }
         ]
     }
